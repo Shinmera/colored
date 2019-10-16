@@ -6,16 +6,45 @@
 
 (in-package #:org.shirakumo.alloy.colored)
 
+(defun convert-space (h c x m alpha)
+  (cond ((<= h 0) (color m m m alpha))
+        ((<= h 1) (color (+ m c) (+ m x) (+ m 0) alpha))
+        ((<= h 2) (color (+ m x) (+ m c) (+ m 0) alpha))
+        ((<= h 3) (color (+ m 0) (+ m c) (+ m x) alpha))
+        ((<= h 4) (color (+ m 0) (+ m x) (+ m c) alpha))
+        ((<= h 5) (color (+ m x) (+ m 0) (+ m c) alpha))
+        ((<= h 6) (color (+ m c) (+ m 0) (+ m x) alpha))))
+
 (defun rgb (red green blue &optional (alpha 1))
   (color red green blue alpha))
 
-(defun hsv (hue saturation value &optional (alpha 1)))
+(defun hsv (hue saturation value &optional (alpha 1))
+  (flet ((f (n)
+           (let ((k (mod (+ n (/ hue 60)) 6)))
+             (- value (* value saturation (max 0 (min 1 k (- 4 k))))))))
+    (color (f 5) (f 3) (f 1) alpha)))
 
-(defun hsl (hue saturation lightness &optional (alpha 1)))
+(defun hsl (hue saturation lightness &optional (alpha 1))
+  (let ((a (* saturation (min lightness (- 1 lightness)))))
+    (flet ((f (n)
+             (let ((k (mod (+ n (/ hue 30)) 12)))
+               (- lightness (* a (max -1 (min 1 (- k 3) (- k 9))))))))
+      (color (f 0) (f 8) (f 4) alpha))))
 
-(defun hsi (hue saturation intensity &optional (alpha 1)))
+(defun hsi (hue saturation intensity &optional (alpha 1))
+  (let* ((h (/ hue 60))
+         (z (- 1 (abs (1- (mod h 2)))))
+         (c (/ (* 3 intensity saturation) (1+ z)))
+         (x (* c z))
+         (m (* intensity (- 1 saturation))))
+    (convert-space h c x m alpha)))
 
-(defun hslu (hue saturation luma &optional (alpha 1)))
+(defun hcl (hue chroma luma &optional (alpha 1))
+  (let* ((h (/ hue 60))
+         (x (* chroma (- 1 (abs (- (mod h 2) 1)))))
+         (c (convert-space h chroma x 0 alpha))
+         (m (- luma (+ (* .3 (r c)) (* .59 (g c)) (* .11 (b c))))))
+    (color (+ m (r c)) (+ m (g c)) (+ m (b c)) alpha)))
 
 (defun cmyk (cyan magenta yellow black &optional (alpha 1)))
 
@@ -64,7 +93,7 @@
 
 (defun to-cmyk (color))
 
-(defun to-hslu (color))
+(defun to-hcl (color))
 
 
 (defun red (color)
@@ -88,6 +117,8 @@
 (defun lightness (color))
 
 (defun intensity (color))
+
+(defun chroma (color))
 
 (defun luma (color))
 
