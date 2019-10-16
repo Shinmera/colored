@@ -32,3 +32,6 @@
                `(load-time-value (float ,arg 0f0))
                `(float ,arg 0f0))))
     `(%color ,(fold r) ,(fold g) ,(fold b) ,(fold a))))
+
+;; FIXME: extra type for CMYK and conversion functions (?)
+;; FIXME: also, CIE XYZ conversions and spaces

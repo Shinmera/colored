@@ -13,7 +13,7 @@
         ((<= h 3) (color (+ m 0) (+ m c) (+ m x) alpha))
         ((<= h 4) (color (+ m 0) (+ m x) (+ m c) alpha))
         ((<= h 5) (color (+ m x) (+ m 0) (+ m c) alpha))
-        ((<= h 6) (color (+ m c) (+ m 0) (+ m x) alpha))))
+        (T        (color (+ m c) (+ m 0) (+ m x) alpha))))
 
 (defun rgb (red green blue &optional (alpha 1))
   (color red green blue alpha))
@@ -45,8 +45,6 @@
          (c (convert-space h chroma x 0 alpha))
          (m (- luma (+ (* .3 (r c)) (* .59 (g c)) (* .11 (b c))))))
     (color (+ m (r c)) (+ m (g c)) (+ m (b c)) alpha)))
-
-(defun cmyk (cyan magenta yellow black &optional (alpha 1)))
 
 ;;; Calculate an RGB triplet from a colour temperature,
 ;;; according to real sunlight scales. This is based on
@@ -83,18 +81,53 @@
              alpha))))
 
 
-(defun to-rgb (color))
+(defun to-rgb (color)
+  (list (r color) (g color) (b color)))
 
-(defun to-hsv (color))
+(defun %hue (color max min)
+  (flet ((f (x y)
+           (let ((h (* 60 (+ x (/ y (- max min))))))
+             (if (<= 0 h) 0 (+ h 360)))))
+    (cond ((= (r color) (g color) (b color)) 0)
+          ((= max (r color)) (f 0 (- (g color) (b color))))
+          ((= max (g color)) (f 2 (- (b color) (r color))))
+          (T                 (f 4 (- (r color) (g color)))))))
 
-(defun to-hsl (color))
+(defun to-hsv (color)
+  (let ((max (max (r color) (g color) (b color)))
+        (min (min (r color) (g color) (b color))))
+    (list (%hue color max min)
+          (if (= 0 max) 0 (/ (- max min) max))
+          (max (r color) (g color) (b color)))))
 
-(defun to-hsi (color))
+(defun to-hsl (color)
+  (let ((max (max (r color) (g color) (b color)))
+        (min (min (r color) (g color) (b color))))
+    (list (%hue color max min)
+          (cond ((= 0 max) 0)
+                ((= 1 min) 0)
+                (T         (/ (- max min) (- 1 (abs (1- (+ max min)))))))
+          (/ (+ max min) 2))))
 
-(defun to-cmyk (color))
+(defun to-hsi (color)
+  (let ((max (max (r color) (g color) (b color)))
+        (min (min (r color) (g color) (b color))))
+    (list (%hue color max min)
+          (- 1 (* 3 min))
+          (/ (+ (r color) (g color) (b color)) 3))))
 
-(defun to-hcl (color))
-
+(defun to-hcl (color)
+  (let* ((max (max (r color) (g color) (b color)))
+         (min (min (r color) (g color) (b color)))
+         (a (/ min max 100))
+         (g 3)
+         (q (exp (* a g))))
+    (list (%hue color max min)
+          (/ (* q (+ (abs (- (r color) (g color)))
+                     (abs (- (g color) (b color)))
+                     (abs (- (b color) (r color)))))
+             3)
+          (/ (+ (* q max) (* (- 1 q) min)) 2))))
 
 (defun red (color)
   (r color))
@@ -108,26 +141,49 @@
 (defun alpha (color)
   (a color))
 
-(defun hue (color))
+(defun hue (color)
+  (let ((max (max (r color) (g color) (b color)))
+        (min (min (r color) (g color) (b color))))
+    (flet ((f (x)
+             (let ((h (* 60 (+ x (/ y (- max min))))))
+               (if (<= 0 h) 0 (+ h 360)))))
+      (cond ((= (r color) (g color) (b color)) 0)
+            ((= max (r color)) (f 0 (- (g color) (b color))))
+            ((= max (g color)) (f 2 (- (b color) (r color))))
+            (T                 (f 4 (- (r color) (g color))))))))
 
-(defun saturation (color))
+(defun saturation (color)
+  ;; Note that this is HSV saturation.
+  (let ((max (max (r color) (g color) (b color)))
+        (min (min (r color) (g color) (b color))))
+    (if (= 0 max) 0 (/ (- max min) max))))
 
-(defun value (color))
+(defun value (color)
+  (max (r color) (g color) (b color)))
 
-(defun lightness (color))
+(defun lightness (color)
+  (/ (+ (max (r color) (g color) (b color))
+        (min (r color) (g color) (b color)))
+     2))
 
-(defun intensity (color))
+(defun intensity (color)
+  (/ (+ (r color) (g color) (b color)) 3))
 
-(defun chroma (color))
+(defun chroma (color)
+  (let* ((max (max (r color) (g color) (b color)))
+         (min (min (r color) (g color) (b color)))
+         (a (/ min max 100))
+         (g 3)
+         (q (exp (* a g))))
+    (/ (* q (+ (abs (- (r color) (g color)))
+               (abs (- (g color) (b color)))
+               (abs (- (b color) (r color)))))
+       3)))
 
-(defun luma (color))
-
-(defun cyan (color))
-
-(defun magenta (color))
-
-(defun yellow (color))
-
-(defun black (color))
-
-(defun temperature (color))
+(defun luma (color)
+  (let* ((max (max (r color) (g color) (b color)))
+         (min (min (r color) (g color) (b color)))
+         (a (/ min max 100))
+         (g 3)
+         (q (exp (* a g))))
+    (/ (+ (* q max) (* (- 1 q) min)) 2)))
