@@ -49,7 +49,9 @@
    #:lightness
    #:intensity
    #:chroma
-   #:luma)
+   #:luma
+   #:color-matrix
+   #:map-color)
   ;; constants.lisp
   (:export
    #:define-color))

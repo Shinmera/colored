@@ -215,3 +215,18 @@
          (g 3)
          (q (exp (* a g))))
     (/ (+ (* q max) (* (- 1 q) min)) 2)))
+
+(deftype color-matrix ()
+  '(vector single-float (9)))
+
+(defun map-color (color transform)
+  (check-type transform color-matrix)
+  (let ((r (r color))
+        (g (g color))
+        (b (b color)))
+    (flet ((c (y x) (aref transform (+ (* y 3) x))))
+      (declare (inline #'a))
+      (color (+ (* r (c 0 0)) (* g (c 0 1)) (* b (c 0 2)))
+             (+ (* r (c 1 0)) (* g (c 1 1)) (* b (c 1 2)))
+             (+ (* r (c 2 0)) (* g (c 2 1)) (* b (c 2 2)))
+             (a color)))))
