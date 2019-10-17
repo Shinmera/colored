@@ -6,8 +6,9 @@
 
 (in-package #:org.shirakumo.alloy.colored)
 
+(declaim (inline %color))
 (defstruct (color
-            (:constructor %color (r g b &optional (a 1.0f0)))
+            (:constructor %color (r g b a))
             (:conc-name NIL)
             (:predicate NIL)
             (:copier NIL))
@@ -31,7 +32,9 @@
            (if (constantp arg env)
                `(load-time-value (float ,arg 0f0))
                `(float ,arg 0f0))))
-    `(%color ,(fold r) ,(fold g) ,(fold b) ,(fold a))))
+    (if (and (constantp r env) (constantp g env) (constantp b env) (constantp a env))
+        `(load-time-value (%color (float ,r 0f0) (float ,g 0f0) (float ,b 0f0) (float ,a 0f0)))
+        `(%color ,(fold r) ,(fold g) ,(fold b) ,(fold a)))))
 
 (defun 2color= (a b)
   (and (= (r a) (r b))
