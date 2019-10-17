@@ -6,7 +6,38 @@
 
 (in-package #:org.shirakumo.alloy.colored)
 
-(defun convert-space (h c x m alpha)
+(defmacro decode-color (integer channel-size bytes)
+  (let ((int-size (* channel-size (length bytes))))
+    `(color ,@(loop for channel in '(r g b a)
+                    for pos = (position channel bytes)
+                    collect (cond (pos
+                                   `(/ (ldb (byte ,channel-size ,(- int-size (* channel-size (1+ pos)))) ,integer)
+                                       255f0))
+                                  ((eq channel 'a) 1f0)
+                                  (T 0f0))))))
+
+(defmacro encode-color (color channel-size bytes)
+  (let ((int-size (* channel-size (length bytes))))
+    `(+ ,@(loop for channel in '(r g b a)
+                for pos = (position channel bytes)
+                when pos
+                collect `(ash (max 0 (min 255 (floor (* 255 (,channel ,color)))))
+                              ,(- int-size (* channel-size (1+ pos))))))))
+
+(defun rgb (integer) (decode-color integer 8 (r g b)))
+(defun bgr (integer) (decode-color integer 8 (b g r)))
+(defun argb (integer) (decode-color integer 8 (a r g b)))
+(defun rgba (integer) (decode-color integer 8 (r g b a)))
+(defun bgra (integer) (decode-color integer 8 (b g r a)))
+(defun abgr (integer) (decode-color integer 8 (a b g r)))
+(defun to-rgb (color) (encode-color color 8 (r g b)))
+(defun to-bgr (color) (encode-color color 8 (b g r)))
+(defun to-argb (color) (encode-color color 8 (a r g b)))
+(defun to-rgba (color) (encode-color color 8 (r g b a)))
+(defun to-bgra (color) (encode-color color 8 (b g r a)))
+(defun to-abgr (color) (encode-color color 8 (a b g r)))
+
+(defun convert-hue-space (h c x m alpha)
   (cond ((<= h 0) (color m m m alpha))
         ((<= h 1) (color (+ m c) (+ m x) (+ m 0) alpha))
         ((<= h 2) (color (+ m x) (+ m c) (+ m 0) alpha))
@@ -14,9 +45,6 @@
         ((<= h 4) (color (+ m 0) (+ m x) (+ m c) alpha))
         ((<= h 5) (color (+ m x) (+ m 0) (+ m c) alpha))
         (T        (color (+ m c) (+ m 0) (+ m x) alpha))))
-
-(defun rgb (red green blue &optional (alpha 1))
-  (color red green blue alpha))
 
 (defun hsv (hue saturation value &optional (alpha 1))
   (flet ((f (n)
@@ -37,12 +65,12 @@
          (c (/ (* 3 intensity saturation) (1+ z)))
          (x (* c z))
          (m (* intensity (- 1 saturation))))
-    (convert-space h c x m alpha)))
+    (convert-hue-space h c x m alpha)))
 
 (defun hcl (hue chroma luma &optional (alpha 1))
   (let* ((h (/ hue 60))
          (x (* chroma (- 1 (abs (- (mod h 2) 1)))))
-         (c (convert-space h chroma x 0 alpha))
+         (c (convert-hue-space h chroma x 0 alpha))
          (m (- luma (+ (* .3 (r c)) (* .59 (g c)) (* .11 (b c))))))
     (color (+ m (r c)) (+ m (g c)) (+ m (b c)) alpha)))
 
@@ -53,7 +81,7 @@
 ;;; Colours in the region 0K - 1'000K are just linearly
 ;;; scaled from 1'000K towards black.
 ;;; Daylight occurs in the region 5'000K - 6'500K.
-(defun temp (kelvin &optional (alpha 1))
+(defun temperature-color (kelvin &optional (alpha 1))
   (let* ((kelvin (coerce kelvin 'double-float))
          (temp (max 1000d0 kelvin)))
     (declare (type (double-float 1d0) temp))
@@ -83,10 +111,6 @@
               115.67994401066147d0
               10d0)
              alpha))))
-
-
-(defun to-rgb (color)
-  (list (r color) (g color) (b color)))
 
 (defun %hue (color max min)
   (flet ((f (x y)

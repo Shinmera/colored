@@ -15,6 +15,7 @@
   :components ((:file "package")
                (:file "type")
                (:file "ops")
+               (:file "constants")
                (:file "documentation"))
   :depends-on (:documentation-utils)
   :in-order-to ((asdf:test-op (asdf:test-op :colored-test))))

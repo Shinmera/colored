@@ -7,14 +7,14 @@
 (in-package #:org.shirakumo.alloy.colored)
 
 (defstruct (color
-            (:include fill)
             (:constructor %color (r g b &optional (a 1.0f0)))
             (:conc-name NIL)
-            (:predicate NIL))
-  (r 0.0f0 :type single-float)
-  (g 0.0f0 :type single-float)
-  (b 0.0f0 :type single-float)
-  (a 1.0f0 :type single-float))
+            (:predicate NIL)
+            (:copier NIL))
+  (r 0.0f0 :type single-float :read-only T)
+  (g 0.0f0 :type single-float :read-only T)
+  (b 0.0f0 :type single-float :read-only T)
+  (a 1.0f0 :type single-float :read-only T))
 
 (defmethod print-object ((color color) stream)
   (format stream "~s" (list 'color (r color) (g color) (b color) (a color))))
@@ -32,6 +32,24 @@
                `(load-time-value (float ,arg 0f0))
                `(float ,arg 0f0))))
     `(%color ,(fold r) ,(fold g) ,(fold b) ,(fold a))))
+
+(defun 2color= (a b)
+  (and (= (r a) (r b))
+       (= (g a) (g b))
+       (= (b a) (b b))
+       (= (a a) (a b))))
+
+(defun color= (color &rest more)
+  (loop for other in more
+        always (2color= color other)))
+
+(define-compiler-macro color= (color &rest more)
+  (if more
+      (let ((colorg (gensym "COLOR")))
+        `(let ((,colorg ,color))
+           (and ,@(loop for other in more
+                        collect `(2color= ,colorg ,other)))))
+      T))
 
 ;; FIXME: extra type for CMYK and conversion functions (?)
 ;; FIXME: also, CIE XYZ conversions and spaces
