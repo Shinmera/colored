@@ -49,16 +49,20 @@
 ;;; Calculate an RGB triplet from a colour temperature,
 ;;; according to real sunlight scales. This is based on
 ;;; http://www.zombieprototypes.com/?p=210
-;;; This should be usable in the region 1'000K to 40'000K.
+;;; This should be usable in the region 0K to 40'000K.
+;;; Colours in the region 0K - 1'000K are just linearly
+;;; scaled from 1'000K towards black.
 ;;; Daylight occurs in the region 5'000K - 6'500K.
 (defun temp (kelvin &optional (alpha 1))
-  (let ((temp (coerce kelvin 'double-float)))
+  (let* ((kelvin (coerce kelvin 'double-float))
+         (temp (max 1000d0 kelvin)))
     (declare (type (double-float 1d0) temp))
     (declare (optimize speed))
     (flet ((e (a b c d)
              (declare (type double-float a b c d))
-             (let ((x (- (/ temp 100) d)))
-               (coerce (max 0d0 (min 1d0 (/ (+ a (* b x) (* c (the double-float (log x)))) 255)))
+             (let ((x (- (/ temp 100d0) d)))
+               (coerce (* (max 0d0 (min 1d0 (/ (+ a (* b x) (* c (the double-float (log x)))) 255)))
+                          (/ (min kelvin 1000d0) 1000d0))
                        'single-float))))
       (color (e 351.97690566805693d0
                 0.114206453784165d0
