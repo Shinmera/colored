@@ -17,6 +17,8 @@
    #:color-equal)
   ;; ops.lisp
   (:export
+   #:encode-color
+   #:decode-color
    #:rgb
    #:bgr
    #:argb
@@ -50,7 +52,7 @@
    #:chroma
    #:luma
    #:map-color
-   #:gamma-correct
+   #:gamma-adjust
    #:reinhard-map
    #:exposure-map)
   ;; constants.lisp

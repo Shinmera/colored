@@ -6,22 +6,24 @@
 
 (in-package #:org.shirakumo.alloy.colored)
 
-(defmacro decode-color (integer channel-size bytes)
-  (let ((int-size (* channel-size (length bytes))))
+(defmacro decode-color (integer channel-size channels)
+  (let ((int-size (* channel-size (length channels)))
+        (channel-max (1- (expt 2 channel-size))))
     `(color ,@(loop for channel in '(r g b a)
-                    for pos = (position channel bytes)
+                    for pos = (position channel channels :test #'string=)
                     collect (cond (pos
                                    `(/ (ldb (byte ,channel-size ,(- int-size (* channel-size (1+ pos)))) ,integer)
-                                       255f0))
+                                       ,(float channel-max)))
                                   ((eq channel 'a) 1f0)
                                   (T 0f0))))))
 
-(defmacro encode-color (color channel-size bytes)
-  (let ((int-size (* channel-size (length bytes))))
+(defmacro encode-color (color channel-size channels)
+  (let ((int-size (* channel-size (length channels)))
+        (channel-max (1- (expt 2 channel-size))))
     `(+ ,@(loop for channel in '(r g b a)
-                for pos = (position channel bytes)
+                for pos = (position channel channels :test #'string=)
                 when pos
-                collect `(ash (max 0 (min 255 (floor (* 255 (,channel ,color)))))
+                collect `(ash (max 0 (min ,channel-max (floor (* ,channel-max (,channel ,color)))))
                               ,(- int-size (* channel-size (1+ pos))))))))
 
 (defun rgb (integer) (decode-color integer 8 (r g b)))
@@ -166,9 +168,9 @@
 (defun hue (color)
   (let ((max (max (r color) (g color) (b color)))
         (min (min (r color) (g color) (b color))))
-    (flet ((f (x)
+    (flet ((f (x y)
              (let ((h (* 60 (+ x (/ y (- max min))))))
-               (if (<= 0 h) 0 (+ h 360)))))
+               (if (<= 0 h) h (+ h 360)))))
       (cond ((= (r color) (g color) (b color)) 0)
             ((= max (r color)) (f 0 (- (g color) (b color))))
             ((= max (g color)) (f 2 (- (b color) (r color))))
@@ -216,7 +218,7 @@
          (funcall transform (b color))
          (a color)))
 
-(defun gamma-correct (color gamma)
+(defun gamma-adjust (color gamma)
   (color (expt (r color) gamma)
          (expt (g color) gamma)
          (expt (b color) gamma)

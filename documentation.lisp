@@ -26,6 +26,38 @@ See RGB"))
 
 ;; ops.lisp
 (docs:define-docs
+  (function decode-color
+    "Constructs a colour from the given integer colour representation.
+
+CHANNEL-SIZE should be the number of bits per channel, and CHANNELS a
+list in order of the channels. The list should contain symbols naming
+the channels R G B A.
+
+For instance, to decode a 16bpc BGRA integer, you would use
+  (decode-color int 16 (b g r a))
+
+Please note that this is a macro and the arguments except for the
+INTEGER must be literal.
+
+See COLOR (type)
+See ENCODE-COLOR")
+
+  (function encode-color
+    "Constructs an integer for the colour using the given integer colour representation.
+
+CHANNEL-SIZE should be the number of bits per channel, and CHANNELS a
+list in order of the channels. The list should contain symbols naming
+the channels R G B A.
+
+For instance, to encode a 16bpc BGRA integer, you would use
+  (encode-color color 16 (b g r a))
+
+Please note that this is a macro and the arguments except for the
+COLOR must be literal.
+
+See COLOR (type)
+See DECODE-COLOR")
+  
   (function rgb
     "Reads a colour out of an 8bpc RGB integer.
 
@@ -307,7 +339,7 @@ the transform function. The A channel is simply copied.
 
 See COLOR (type)")
 
-  (function gamma-correct
+  (function gamma-adjust
     "Returns the gamma corrected color.
 
 This is equivalent to mapping each RGB channel by (expt C gamma). If
@@ -325,7 +357,7 @@ This will also apply gamma correction. As such the input colour should
 be in HDR gamma space.
 
 See COLOR (type)
-See GAMMA-CORRECT")
+See GAMMA-ADJUST")
 
   (function exposure-map
     "Performs a simple exposure tone mapping.
@@ -334,7 +366,7 @@ This will also apply gamma correction. As such the input colour should
 be in HDR gamma space.
 
 See COLOR (type)
-See GAMMA-CORRECT"))
+See GAMMA-ADJUST"))
 
 ;; type.lisp
 (docs:define-docs
