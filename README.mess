@@ -17,3 +17,6 @@ Colours are immutable. As such they can and will be cached wherever possible. Ne
 ::
 
 There are a variety of functions to convert between colour spaces. Please see the symbol index to find what's available.
+
+## Constants
+Colored offers a database of standard colours with their associated colour values. You can find these in the ``org.shirakumo.alloy.colored.colors`` package. You can also define new colours using ``define-color``.
