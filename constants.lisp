@@ -6,7 +6,7 @@
 
 (in-package #:org.shirakumo.alloy.colored)
 
-(defmacro define-color (name int &optional (conversion #'rgb))
+(defmacro define-color (name int &optional (conversion '#'rgb))
   (let* ((std (find-package '#:org.shirakumo.alloy.colored.colors))
          (name (if (symbol-package name)
                    name
@@ -15,19 +15,19 @@
        ,@(when (eq std (symbol-package name))
            `((export ',name ,(symbol-package name))))
        (unless (boundp ',name)
-         (defconstant ,name (funcall ,conversion ,rgb))))))
+         (defconstant ,name (funcall ,conversion ,int))))))
 
 (define-color #:black #x000000)
 (define-color #:white #xFFFFFF)
 (define-color #:red #xFF0000)
-(define-color #:lime #x00FF00)
+(define-color #:green #x00FF00)
 (define-color #:blue #x0000FF)
 (define-color #:yellow #xFFFF00)
 (define-color #:silver #xC0C0C0)
 (define-color #:gray #x808080)
 (define-color #:maroon #x800000)
 (define-color #:olive #x808000)
-(define-color #:green #x008000)
+(define-color #:lime #x008000)
 (define-color #:purple #x800080)
 (define-color #:teal #x008080)
 (define-color #:navy #x000080)
