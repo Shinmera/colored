@@ -54,5 +54,5 @@
                         collect `(2color= ,colorg ,other)))))
       T))
 
-;; FIXME: extra type for CMYK and conversion functions (?)
-;; FIXME: also, CIE XYZ conversions and spaces
+;; TODO: ICC Color space conversions http://www.color.org/specification/ICC1v43_2010-12.pdf
+;;       This would also include CMYK colors and the conversion between RGB<->CMYK.
