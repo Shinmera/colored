@@ -27,15 +27,15 @@
 (defun rgb (integer) (decode-color integer 8 (r g b)))
 (defun bgr (integer) (decode-color integer 8 (b g r)))
 (defun argb (integer) (decode-color integer 8 (a r g b)))
+(defun abgr (integer) (decode-color integer 8 (a b g r)))
 (defun rgba (integer) (decode-color integer 8 (r g b a)))
 (defun bgra (integer) (decode-color integer 8 (b g r a)))
-(defun abgr (integer) (decode-color integer 8 (a b g r)))
 (defun to-rgb (color) (encode-color color 8 (r g b)))
 (defun to-bgr (color) (encode-color color 8 (b g r)))
 (defun to-argb (color) (encode-color color 8 (a r g b)))
+(defun to-abgr (color) (encode-color color 8 (a b g r)))
 (defun to-rgba (color) (encode-color color 8 (r g b a)))
 (defun to-bgra (color) (encode-color color 8 (b g r a)))
-(defun to-abgr (color) (encode-color color 8 (a b g r)))
 
 (defun convert-hue-space (h c x m alpha)
   (cond ((<= h 0) (color m m m alpha))
@@ -74,13 +74,7 @@
          (m (- luma (+ (* .3 (r c)) (* .59 (g c)) (* .11 (b c))))))
     (color (+ m (r c)) (+ m (g c)) (+ m (b c)) alpha)))
 
-;;; Calculate an RGB triplet from a colour temperature,
-;;; according to real sunlight scales. This is based on
-;;; http://www.zombieprototypes.com/?p=210
-;;; This should be usable in the region 0K to 40'000K.
-;;; Colours in the region 0K - 1'000K are just linearly
-;;; scaled from 1'000K towards black.
-;;; Daylight occurs in the region 5'000K - 6'500K.
+;;; This is based on http://www.zombieprototypes.com/?p=210
 (defun temperature-color (kelvin &optional (alpha 1))
   (let* ((kelvin (coerce kelvin 'double-float))
          (temp (max 1000d0 kelvin)))
@@ -216,17 +210,26 @@
          (q (exp (* a g))))
     (/ (+ (* q max) (* (- 1 q) min)) 2)))
 
-(deftype color-matrix ()
-  '(vector single-float (9)))
-
 (defun map-color (color transform)
-  (check-type transform color-matrix)
-  (let ((r (r color))
-        (g (g color))
-        (b (b color)))
-    (flet ((c (y x) (aref transform (+ (* y 3) x))))
-      (declare (inline #'a))
-      (color (+ (* r (c 0 0)) (* g (c 0 1)) (* b (c 0 2)))
-             (+ (* r (c 1 0)) (* g (c 1 1)) (* b (c 1 2)))
-             (+ (* r (c 2 0)) (* g (c 2 1)) (* b (c 2 2)))
-             (a color)))))
+  (color (funcall transform (r color))
+         (funcall transform (g color))
+         (funcall transform (b color))
+         (a color)))
+
+(defun gamma-correct (color gamma)
+  (color (expt (r color) gamma)
+         (expt (g color) gamma)
+         (expt (b color) gamma)
+         (a color)))
+
+(defun reinhard-map (color &key (gamma 2.2))
+  (color (expt (/ (r color) (1+ (r color))) (/ gamma))
+         (expt (/ (g color) (1+ (g color))) (/ gamma))
+         (expt (/ (b color) (1+ (b color))) (/ gamma))
+         (a color)))
+
+(defun exposure-map (color exposure &key (gamma 2.2))
+  (color (expt (- 1 (exp (* exposure (- (r color))))) (/ gamma))
+         (expt (- 1 (exp (* exposure (- (g color))))) (/ gamma))
+         (expt (- 1 (exp (* exposure (- (b color))))) (/ gamma))
+         (a color)))

@@ -54,5 +54,23 @@
                         collect `(2color= ,colorg ,other)))))
       T))
 
+(defun 2color-equal (a b)
+  (and (= (r a) (r b))
+       (= (g a) (g b))
+       (= (b a) (b b))))
+
+(defun color-equal (color &rest more)
+  (loop for other in more
+        always (2color-equal color other)))
+
+(define-compiler-macro color-equal (color &rest more)
+  (if more
+      (let ((colorg (gensym "COLOR")))
+        `(let ((,colorg ,color))
+           (and ,@(loop for other in more
+                        collect `(2color-equal ,colorg ,other)))))
+      T))
+
+
 ;; TODO: ICC Color space conversions http://www.color.org/specification/ICC1v43_2010-12.pdf
 ;;       This would also include CMYK colors and the conversion between RGB<->CMYK.
