@@ -17,6 +17,7 @@
        (unless (boundp ',name)
          (defconstant ,name (funcall ,conversion ,int))))))
 
+(define-color #:transparent #x00000000 #'rgba)
 (define-color #:black #x000000)
 (define-color #:white #xFFFFFF)
 (define-color #:red #xFF0000)
