@@ -235,3 +235,19 @@
          (expt (- 1 (exp (* exposure (- (g color))))) (/ gamma))
          (expt (- 1 (exp (* exposure (- (b color))))) (/ gamma))
          (a color)))
+
+(defun lerp (x a b)
+  (macrolet ((lerp (f)
+               `(+ (* (,f a) (- 1 x)) (* (,f b) x))))
+    (color (lerp r) (lerp g) (lerp b) (lerp a))))
+
+(defun gradient (x stops)
+  (if (<= x 0)
+      (cdr (first stops))
+      (loop for prev = (first stops) then next
+            for next in (rest stops)
+            do (destructuring-bind (px . pc) prev
+                 (destructuring-bind (nx . nc) next
+                   (when (<= px x nx)
+                     (return (lerp (/ (- x px) (- nx px)) pc nc)))))
+            finally (return (cdr prev)))))

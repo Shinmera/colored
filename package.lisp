@@ -54,7 +54,9 @@
    #:map-color
    #:gamma-adjust
    #:reinhard-map
-   #:exposure-map)
+   #:exposure-map
+   #:lerp
+   #:gradient)
   ;; constants.lisp
   (:export
    #:define-color))
