@@ -387,21 +387,21 @@ See LAB")
     "Create a CIE XYZ colour instance.
 
 See COLOR (type)
-See X
-See Y
-See Z")
+See X*
+See Y*
+See Z*")
 
-  (function x
+  (function x*
     "Return the X component.
 
 See XYZ")
 
-  (function y
+  (function y*
     "Return the Y component.
 
 See XYZ")
 
-  (function z
+  (function z*
     "Return the Z component.
 
 See XYZ")
