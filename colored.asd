@@ -13,6 +13,8 @@
   :homepage "https://github.com/Shinmera/colored"
   :serial T
   :components ((:file "package")
+               (:file "whitepoints")
+               (:file "conversion-matrices")
                (:file "type")
                (:file "ops")
                (:file "constants")

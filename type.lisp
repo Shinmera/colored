@@ -88,11 +88,13 @@
         (list '%rgb (fold r) (fold g) (fold b) (fold a)))))
 
 (define-color-type rgb (r g b))
+(define-color-type srgb (r g b) rgb)
 (define-color-type hue-type (h s))
 (define-color-type hsv (h s v) hue-type)
 (define-color-type hsl (h s l) hue-type)
 (define-color-type hsi (h s i) hue-type)
 (define-color-type cmyk (c m y k))
+(define-color-type xyz (x y z))
 (define-color-type lab (l* a* b*))
 
 (defun color= (color &rest more)
