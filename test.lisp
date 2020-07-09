@@ -16,6 +16,11 @@
 (defun ~= (a b)
   (< (abs (- b a)) 0.0001))
 
+(defun color~= (a b)
+  (loop for channel in (colored:channels a)
+        always (~= (funcall channel a)
+                   (funcall channel b))))
+
 (define-test colored)
 
 (define-test type
@@ -54,13 +59,11 @@
   :parent colored
   :depends-on (type))
 
+(defun round-trip (color type)
+  (colored:convert (colored:convert color type) (type-of color)))
+
 (define-test hsv
   :parent mapping
-  (is colored:color= colors:red (colored:hsv 0 1 1))
-  (is colored:color= colors:green (colored:hsv 120 1 1))
-  (is colored:color= colors:blue (colored:hsv 240 1 1))
-  (is colored:color= colors:white (colored:hsv 0 0 1))
-  (is colored:color= colors:black (colored:hsv 0 0 0))
   (is = 0 (colored:hue colors:red))
   (is = 120 (colored:hue colors:green))
   (is = 240 (colored:hue colors:blue))
@@ -69,24 +72,32 @@
   (is = 1 (colored:saturation colors:red))
   (is = 0 (colored:saturation colors:white))
   (is = 0 (colored:saturation colors:black))
-  (is = 1 (colored:value colors:red))
-  (is = 1 (colored:value colors:white))
-  (is = 0 (colored:value colors:black)))
+  (is = 0 (colored:value colors:red))
+  (is = 0 (colored:value colors:white))
+  (is = 0 (colored:value colors:black))
+  (is colored:color= colors:red (round-trip colors:red 'colored:hsv))
+  (loop repeat 10
+        for color = (colored:rgb (random 1) (random 1) (random 1))
+        do (is color~= color (round-trip color 'colored:hsv))))
 
 (define-test hsl
   :parent mapping
-  (is colored:color= colors:red (colored:hsl 0 1 0.5))
-  (is colored:color= colors:black (colored:hsl 0 1 0))
-  (is colored:color= colors:white (colored:hsl 0 1 1))
   (is = 0.5 (colored:lightness colors:red))
   (is = 0.5 (colored:lightness colors:green))
   (is = 1 (colored:lightness colors:white))
-  (is = 0 (colored:lightness colors:black)))
+  (is = 0 (colored:lightness colors:black))
+  (is colored:color= colors:red (round-trip colors:red 'colored:hsl))
+  (loop repeat 10
+        for color = (colored:rgb (random 1) (random 1) (random 1))
+        do (is color~= color (round-trip color 'colored:hsl))))
 
 (define-test hsi
   :parent mapping
-  (is colored:color= colors:red () (colored:hsi 0 1 1/3))
   (is ~= 1/3 (colored:intensity colors:red))
   (is ~= 1/3 (colored:intensity colors:green))
   (is = 1 (colored:intensity colors:white))
-  (is = 0 (colored:intensity colors:black)))
+  (is = 0 (colored:intensity colors:black))
+  (is colored:color= colors:red (round-trip colors:red 'colored:hsi))
+  (loop repeat 10
+        for color = (colored:rgb (random 1) (random 1) (random 1))
+        do (is color~= color (round-trip color 'colored:hsi))))

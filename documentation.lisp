@@ -66,19 +66,6 @@ temperature is around 4'100K.
 
 See COLOR (type)")
 
-  (function convert
-    "Convert a colour to a different colour space (type).
-
-Direct conversions between any colour space and any other is not
-guaranteed to be available, and you may have to convert to a
-common space such as RGB or LAB first and then to your target
-colour space of choice.
-
-Certain conversions may accept additional arguments that influence
-the process and colour range.
-
-See COLOR (type)")
-
   (function red
     "Returns the red component of the colour.
 
@@ -218,6 +205,19 @@ See LAB")
     "Returns the list of available channels in the colour.
 
 Accepts both a COLOR instance and a color type name.
+
+See COLOR (type)")
+
+  (function convert
+    "Convert a colour to a different colour space (type).
+
+Direct conversions between any colour space and any other is not
+guaranteed to be available, and you may have to convert to a
+common space such as RGB or LAB first and then to your target
+colour space of choice.
+
+Certain conversions may accept additional arguments that influence
+the process and colour range.
 
 See COLOR (type)")
 

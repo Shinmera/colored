@@ -6,6 +6,7 @@
 
 (in-package #:org.shirakumo.alloy.colored)
 
+(defgeneric convert (color target-type &key &allow-other-keys))
 (defgeneric channels (color))
 (defgeneric 2color= (a b))
 (defgeneric 2color-equal (a b))
@@ -62,6 +63,8 @@
              (if (and ,@(ftransform `(constantp ,field env)) (constantp a env))
                  (list 'load-time-value (list ',%name ,@(ftransform ``(float ,,field 0f0)) `(float ,a 0f0)))
                  (list ',%name ,@(ftransform `(fold ,field)) (fold a)))))
+
+         (defmethod convert ((color ,name) (_ (eql ',name)) &key) color)
 
          (defmethod 2color= ((a ,name) (b ,name))
            (and ,@(ftransform `(= (,field a) (,field b)))

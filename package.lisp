@@ -8,6 +8,7 @@
   (:use #:cl)
   ;; type.lisp
   (:export
+   #:convert
    #:channels
    #:color
    #:a
@@ -38,25 +39,7 @@
   (:export
    #:encode-color
    #:decode-color
-   #:rgb
-   #:bgr
-   #:argb
-   #:rgba
-   #:bgra
-   #:abgr
-   #:to-rgb
-   #:to-bgr
-   #:to-argb
-   #:to-rgba
-   #:to-bgra
-   #:to-abgr
-   #:hsv
-   #:hsl
-   #:hsi
    #:temperature-color
-   #:to-hsv
-   #:to-hsl
-   #:to-hsi
    #:red
    #:green
    #:blue
@@ -66,10 +49,10 @@
    #:value
    #:lightness
    #:intensity
-   #:map-color
-   #:gamma-adjust
-   #:reinhard-map
-   #:exposure-map
+   #:cyan
+   #:magenta
+   #:yellow
+   #:black
    #:lerp
    #:gradient)
   ;; constants.lisp

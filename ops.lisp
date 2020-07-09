@@ -45,8 +45,6 @@
           ((= max (g color)) (f 2 (- (b color) (r color))))
           (T                 (f 4 (- (r color) (g color)))))))
 
-(defgeneric convert (color target-type &key &allow-other-keys))
-
 (defmethod convert ((color hsv) (_ (eql 'rgb)) &key)
   (flet ((f (n)
            (let ((k (mod (+ n (/ (h color) 60)) 6)))
