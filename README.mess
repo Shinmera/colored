@@ -6,17 +6,17 @@ It currently does not support ICC colour space conversions and XYZ/LAB mappings.
 ## How To
 For the purposes of this tutorial we assume the package ``org.shirakumo.alloy.colored`` is nicknamed ``colored``.
 
-Primarily, colours are constructed using ``color``. This accepts an RGBA quadruplet in floating point range [0,1]. You can also create denormalised colours for HDR purposes, though many conversion functions will expect normalised colours.
+Primarily, colours are constructed using ``color`` or one of the specific colour space constructors (``rgb``, ``hsv``, ``hsl``, ``hsi``, ``cmyk``, ``lab``).
 
-You can also de/serialise colours from direct integer format using the ``rgb`` and ``to-rgb`` family of functions. These functions assume 8 bits per channel formats. If you need different arrangements or channel depths, you can use the generic ``decode-color`` and ``encode-color`` macros.
+You can also de/serialise colours from direct integer format using the ``encode`` and ``decode`` functions.
 
 Colours are immutable. As such they can and will be cached wherever possible. Nevertheless, it is not guaranteed that two colours with the same channel values will be ``eq``. To compare colours, use ``color=`` and ``color-equal``.
 
 ::common lisp
-(colored:color= (colored:color 1 0 0) (colored:bgr #x0000FF)) ; => T
+(colored:color= (colored:color 1 0 0) (colored:decode #xFF0000)) ; => T
 ::
 
-There are a variety of functions to convert between colour spaces. Please see the symbol index to find what's available.
+In order to convert colours between different colour spaces, use the ``convert`` function.
 
 ## Constants
 Colored offers a database of standard colours with their associated colour values. You can find these in the ``org.shirakumo.alloy.colored.colors`` package. You can also define new colours using ``define-color``.

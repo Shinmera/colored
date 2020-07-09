@@ -37,8 +37,8 @@
    #:color-equal)
   ;; ops.lisp
   (:export
-   #:encode-color
-   #:decode-color
+   #:encode
+   #:decode
    #:temperature-color
    #:red
    #:green

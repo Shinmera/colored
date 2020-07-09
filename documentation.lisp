@@ -26,7 +26,7 @@ See RGB"))
 
 ;; ops.lisp
 (docs:define-docs
-  (function decode-color
+  (function decode
     "Constructs a colour from the given integer colour representation.
 
 CHANNEL-SIZE should be the number of bits per channel, and CHANNELS a
@@ -37,9 +37,9 @@ For instance, to decode a 16bpc BGRA integer, you would use
   (decode-color int 16 '(b g r a))
 
 See COLOR (type)
-See ENCODE-COLOR")
+See ENCODE")
 
-  (function encode-color
+  (function encode
     "Constructs an integer for the colour using the given integer colour representation.
 
 CHANNEL-SIZE should be the number of bits per channel, and CHANNELS a
@@ -50,7 +50,7 @@ For instance, to encode a 16bpc BGRA integer, you would use
   (encode-color color 16 '(b g r a))
 
 See COLOR (type)
-See DECODE-COLOR")
+See DECODE")
 
   (function temperature-color
     "Compute the colour for the corresponding light temperature.

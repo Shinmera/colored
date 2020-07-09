@@ -6,7 +6,7 @@
 
 (in-package #:org.shirakumo.alloy.colored)
 
-(defun decode-color (integer channel-size channels &optional (type 'rgb))
+(defun decode (integer &key (type 'rgb) (channel-size 8) (channels (channels type)))
   (let ((int-size (* channel-size (length channels)))
         (channel-max (1- (expt 2 channel-size))))
     (let ((args (loop for channel in (append (channels type) '(a))
@@ -18,7 +18,7 @@
                                     (T 0f0)))))
       (apply type args))))
 
-(defun encode-color (color channel-size channels)
+(defun encode (color &key (channel-size 8) (channels (channels color)))
   (let ((int-size (* channel-size (length channels)))
         (channel-max (1- (expt 2 channel-size))))
     (loop for channel in (append (channels color) '(a))
