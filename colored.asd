@@ -10,7 +10,9 @@
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "System for colour representation, conversion, and operation."
-  :homepage "https://github.com/Shinmera/colored"
+  :homepage "https://shinmera.github.io/colored"
+  :bug-tracker "https://github.com/Shinmera/colored/issues"
+  :source-control (:git "https://github.com/Shinmera/colored.git")
   :serial T
   :components ((:file "package")
                (:file "whitepoints")
