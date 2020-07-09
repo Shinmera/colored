@@ -6,41 +6,91 @@
 
 (in-package #:org.shirakumo.alloy.colored)
 
-(declaim (inline %color))
+(defgeneric channels (color))
+(defgeneric 2color= (a b))
+(defgeneric 2color-equal (a b))
+
 (defstruct (color
-            (:constructor %color (r g b a))
+            (:constructor _color (a))
             (:conc-name NIL)
             (:predicate NIL)
             (:copier NIL))
-  (r 0.0f0 :type single-float :read-only T)
-  (g 0.0f0 :type single-float :read-only T)
-  (b 0.0f0 :type single-float :read-only T)
   (a 1.0f0 :type single-float :read-only T))
 
-(defmethod print-object ((color color) stream)
-  (format stream "~s" (list 'color (r color) (g color) (b color) (a color))))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmethod channels ((_ color)) NIL)
+  (defmethod channels ((_ (eql 'color))) NIL))
 
-(defmethod make-load-form ((color color) &optional env)
-  (declare (ignore env))
-  (list '%color (r color) (g color) (b color) (a color)))
+(defmacro define-color-type (name fields &optional (super 'color))
+  (macrolet ((ftransform (transform)
+               `(loop for field in fields
+                      collect ,transform)))
+    (let ((%name (intern (format NIL "%~a" name)))
+          (sfields (channels super)))
+      `(progn
+         (declaim (inline ,%name))
+         (defstruct (,name
+                     (:include ,super)
+                     (:constructor ,%name (,@fields a))
+                     (:conc-name NIL)
+                     (:predicate NIL)
+                     (:copier NIL))
+           ,@(loop for field in fields
+                   unless (find field sfields)
+                   collect `(,field 0.0f0 :type single-float :read-only T)))
 
-(defun color (r g b &optional (a 1.0f0))
-  (%color (float r 0f0) (float g 0f0) (float b 0f0) (float a 0f0)))
+         (defmethod print-object ((color ,name) stream)
+           (format stream "~s" (list ',name ,@(ftransform `(,field color)) (a color))))
 
-(define-compiler-macro color (r g b &optional (a 1) &environment env)
+         (defmethod make-load-form ((color ,name) &optional env)
+           (declare (ignore env))
+           (list ',%name ,@(ftransform `(,field color)) (a color)))
+
+         (eval-when (:compile-toplevel :load-toplevel :execute)
+           (defmethod channels ((_ ,name)) ',fields)
+           (defmethod channels ((_ (eql ',name))) ',fields))
+
+         (defun ,name (,@fields &optional (a 1.0f0))
+           (,%name ,@(ftransform `(float ,field 0f0))
+                   (float a 0f0)))
+
+         (define-compiler-macro ,name (,@fields &optional (a 1f0) &environment env)
+           (flet ((fold (arg)
+                    (if (constantp arg env)
+                        `(load-time-value (float ,arg 0f0))
+                        `(float ,arg 0f0))))
+             (if (and ,@(ftransform `(constantp ,field env)) (constantp a env))
+                 (list 'load-time-value (list ',%name ,@(ftransform ``(float ,,field 0f0)) `(float ,a 0f0)))
+                 (list ',%name ,@(ftransform `(fold ,field)) (fold a)))))
+
+         (defmethod 2color= ((a ,name) (b ,name))
+           (and ,@(ftransform `(= (,field a) (,field b)))
+                (= (a a) (a b))))
+
+         (defmethod 2color-equal ((a ,name) (b ,name))
+           (and ,@(ftransform `(= (,field a) (,field b)))))))))
+
+(defun color (r g b &optional (a 1f0))
+  (%rgb (float r 0f0) (float g 0f0) (float b 0f0) (float a 0f0)))
+
+(define-compiler-macro color (r g b &optional (a 1.0) &environment env)
   (flet ((fold (arg)
            (if (constantp arg env)
-               `(load-time-value (float ,arg 0f0))
-               `(float ,arg 0f0))))
-    (if (and (constantp r env) (constantp g env) (constantp b env) (constantp a env))
-        `(load-time-value (%color (float ,r 0f0) (float ,g 0f0) (float ,b 0f0) (float ,a 0f0)))
-        `(%color ,(fold r) ,(fold g) ,(fold b) ,(fold a)))))
+               `(load-time-value (float ,arg 0.0))
+               `(float ,arg 0.0))))
+    (if (and (constantp r env) (constantp g env) (constantp b env))
+        (list 'load-time-value
+              (list '%rgb `(float ,r 0.0) `(float ,g 0.0) `(float ,b 0.0)
+                    `(float ,a 0.0)))
+        (list '%rgb (fold r) (fold g) (fold b) (fold a)))))
 
-(defun 2color= (a b)
-  (and (= (r a) (r b))
-       (= (g a) (g b))
-       (= (b a) (b b))
-       (= (a a) (a b))))
+(define-color-type rgb (r g b))
+(define-color-type hue-type (h s))
+(define-color-type hsv (h s v) hue-type)
+(define-color-type hsl (h s l) hue-type)
+(define-color-type hsi (h s i) hue-type)
+(define-color-type cmyk (c m y k))
+(define-color-type lab (l* a* b*))
 
 (defun color= (color &rest more)
   (loop for other in more
@@ -53,11 +103,6 @@
            (and ,@(loop for other in more
                         collect `(2color= ,colorg ,other)))))
       T))
-
-(defun 2color-equal (a b)
-  (and (= (r a) (r b))
-       (= (g a) (g b))
-       (= (b a) (b b))))
 
 (defun color-equal (color &rest more)
   (loop for other in more

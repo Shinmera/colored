@@ -31,13 +31,10 @@ See RGB"))
 
 CHANNEL-SIZE should be the number of bits per channel, and CHANNELS a
 list in order of the channels. The list should contain symbols naming
-the channels R G B A.
+the channels available to the requested TYPE.
 
 For instance, to decode a 16bpc BGRA integer, you would use
-  (decode-color int 16 (b g r a))
-
-Please note that this is a macro and the arguments except for the
-INTEGER must be literal.
+  (decode-color int 16 '(b g r a))
 
 See COLOR (type)
 See ENCODE-COLOR")
@@ -47,122 +44,13 @@ See ENCODE-COLOR")
 
 CHANNEL-SIZE should be the number of bits per channel, and CHANNELS a
 list in order of the channels. The list should contain symbols naming
-the channels R G B A.
+channels available for the colour being encoded.
 
 For instance, to encode a 16bpc BGRA integer, you would use
-  (encode-color color 16 (b g r a))
-
-Please note that this is a macro and the arguments except for the
-COLOR must be literal.
+  (encode-color color 16 '(b g r a))
 
 See COLOR (type)
 See DECODE-COLOR")
-  
-  (function rgb
-    "Reads a colour out of an 8bpc RGB integer.
-
-See COLOR")
-
-  (function bgr
-    "Reads a colour out of an 8bpc BGR integer.
-
-See COLOR")
-
-  (function argb
-    "Reads a colour out of an 8bpc ARGB integer.
-
-See COLOR")
-
-  (function abgr
-    "Reads a colour out of an 8bpc ABGR integer.
-
-See COLOR")
-
-  (function rgba
-    "Reads a colour out of an 8bpc RGBA integer.
-
-See COLOR")
-
-  (function bgra
-    "Reads a colour out of an 8bpc BGRA integer.
-
-See COLOR")
-
-  (function to-rgb
-    "Encodes a colour into an 8bpc RGB integer.
-
-See COLOR")
-
-  (function to-bgr
-    "Encodes a colour into an 8bpc BGR integer.
-
-See COLOR")
-
-  (function to-argb
-    "Encodes a colour into an 8bpc ARGB integer.
-
-See COLOR")
-
-  (function to-abgr
-    "Encodes a colour into an 8bpc ABGR integer.
-
-See COLOR")
-
-  (function to-rgba
-    "Encodes a colour into an 8bpc RGBA integer.
-
-See COLOR")
-
-  (function to-bgra
-    "Encodes a colour into an 8bpc BGRA integer.
-
-See COLOR")
-
-  (function hsv
-    "Convert the Hue Saturation Value triplet to a colour.
-
-The Hue should be in [0,360[ degrees, the other two values in the
-[0,1] range.
-
-See TO-HSV
-See HUE
-See SATURATION
-See VALUE
-See COLOR (type)")
-
-  (function hsl
-    "Convert the Hue Saturation Lightness triplet to a colour.
-
-The Hue should be in [0,360[ degrees, the other two values in the
-[0,1] range.
-
-See TO-HSL
-See HUE
-See LIGHTNESS
-See COLOR (type)")
-
-  (function hsi
-    "Convert the Hue Saturation Intensity triplet to a colour.
-
-The Hue should be in [0,360[ degrees, the other two values in the
-[0,1] range.
-
-See TO-HSI
-See HUE
-See INTENSITY
-See COLOR (type)")
-
-  (function hcl
-    "Convert the Hue Chroma Luma triplet to a colour.
-
-The Hue should be in [0,360[ degrees, the other two values in the
-[0,1] range.
-
-See TO-HCL
-See HUE
-See CHROMA
-See LUMA
-See COLOR (type)")
 
   (function temperature-color
     "Compute the colour for the corresponding light temperature.
@@ -178,72 +66,37 @@ temperature is around 4'100K.
 
 See COLOR (type)")
 
-  (function to-hsv
-    "Return the Hue Saturation Value triplet of the colour.
+  (function convert
+    "Convert a colour to a different colour space (type).
 
-Returns a list of the form (H S V).
+Direct conversions between any colour space and any other is not
+guaranteed to be available, and you may have to convert to a
+common space such as RGB or LAB first and then to your target
+colour space of choice.
 
-Note that the result is unspecified if the colour is not in the
-normalised range.
+Certain conversions may accept additional arguments that influence
+the process and colour range.
 
-See HSV
-See HUE
-See SATURATION
-See VALUE
-See COLOR (type)")
-
-  (function to-hsl
-    "Return the Hue Saturation Lightness triplet of the colour.
-
-Returns a list of the form (H S L).
-
-Note that the result is unspecified if the colour is not in the
-normalised range.
-
-See HSV
-See HUE
-See LIGHTNESS
-See COLOR (type)")
-
-  (function to-hsi
-    "Return the Hue Saturation Intensity triplet of the colour.
-
-Returns a list of the form (H S I).
-
-Note that the result is unspecified if the colour is not in the
-normalised range.
-
-See HSV
-See HUE
-See INTENSITY
-See COLOR (type)")
-
-  (function to-hcl
-    "Return the Hue Chroma Luma triplet of the colour.
-
-Returns a list of the form (H C L).
-
-Note that the result is unspecified if the colour is not in the
-normalised range.
-
-See HSV
-See HUE
-See CHROMA
-See LUMA
 See COLOR (type)")
 
   (function red
     "Returns the red component of the colour.
+
+If not in RGB format, is first converted to RGB.
 
 See R")
 
   (function green
     "Returns the green component of the colour.
 
+If not in RGB format, is first converted to RGB.
+
 See G")
 
   (function blue
     "Returns the blue component of the colour.
+
+If not in RGB format, is first converted to RGB.
 
 See B")
 
@@ -253,154 +106,118 @@ See B")
 See A")
 
   (function hue
-    "Returns the hue of the colour in degrees [0,360[.
+    "Returns the hue component of the colour in degrees [0,360[.
 
-Note that the result is unspecified if the colour is not in the
-normalised range.
+If not in HSL/HSV/HSI format, is first converted to HSV.
 
-See COLOR (type)
-See HSV
-See HSL
-See HSI
-See HCL
-See TO-HSV
-See TO-HSL
-See TO-HSI
-See TO-HCL")
+See H")
 
   (function saturation
-    "Returns the saturation of the colour.
+    "Returns the saturation component of the colour.
 
-Note that this is the saturation corresponding to HSV, and will not be
-correct for HSL or HSI.
+If not in HSL/HSV/HSI format, is first converted to HSV.
 
-Note that the result is unspecified if the colour is not in the
-normalised range.
-
-See COLOR (type)
-See HSV
-See TO-HSV")
+See S")
 
   (function value
-    "Returns the value of the colour.
+    "Returns the value component of the colour.
 
-Note that the result is unspecified if the colour is not in the
-normalised range.
+If not in HSV format, is first converted to HSV.
 
-See COLOR (type)
-See HSV
-See TO-HSV")
+See V")
 
   (function lightness
-    "Returns the lightness of the colour.
+    "Returns the lightness component of the colour.
 
-Note that the result is unspecified if the colour is not in the
-normalised range.
+If not in HSL format, is first converted to HSL.
 
-See COLOR (type)
-See HSL
-See TO-HSL")
+See L")
 
   (function intensity
-    "Returns the intensity of the colour.
+    "Returns the intensity component of the colour.
 
-Note that the result is unspecified if the colour is not in the
-normalised range.
+If not in HSI format, is first converted to HSI.
 
-See COLOR (type)
-See HSI
-See TO-HSI")
+See I")
 
-  (function luma
-    "Returns the luma of the colour.
+  (function cyan
+    "Returns the cyan component of the colour.
 
-Note that the result is unspecified if the colour is not in the
-normalised range.
+If not in CMYK format, is first converted to CMYK.
 
-See COLOR (type)
-See HCL
-See TO-HCL")
+See C")
 
-  (function chroma
-    "Returns the chroma of the colour.
+  (function magenta
+    "Returns the magenta component of the colour.
 
-Note that the result is unspecified if the colour is not in the
-normalised range.
+If not in CMYK format, is first converted to CMYK.
 
-See COLOR (type)
-See HCL
-See TO-HCL")
+See M")
 
-  (function map-color
-    "Maps the RGB channels using the given transform function.
+  (function yellow
+    "Returns the yellow component of the colour.
 
-Returns a new colour with each R G B channel mapped individually by
-the transform function. The A channel is simply copied.
+If not in CMYK format, is first converted to CMYK.
 
-See COLOR (type)")
+See Y")
 
-  (function gamma-adjust
-    "Returns the gamma corrected color.
+  (function black
+    "Returns the black component of the colour.
 
-This is equivalent to mapping each RGB channel by (expt C gamma). If
-you need to map back from gamma-space into linear-space, supply the
-inverted gamma value.
+If not in CMYK format, is first converted to CMYK.
 
-See COLOR (type)
-See REINHARD-MAP
-See EXPOSURE-MAP")
+See K")
 
-  (function reinhard-map
-    "Performs a Reinhard tone mapping.
+  (function lerp
+    "Linearly interpolate between two colours from the same colour space.
 
-This will also apply gamma correction. As such the input colour should
-be in HDR gamma space.
+If the colours are of a different colour space (type), an error is
+signalled.
 
-See COLOR (type)
-See GAMMA-ADJUST")
+Each of the colours' channels are interpolated separately.")
 
-  (function exposure-map
-    "Performs a simple exposure tone mapping.
+  (function gradient
+    "Evaluate a colour gradient at a specific point.
 
-This will also apply gamma correction. As such the input colour should
-be in HDR gamma space.
+Returns the linear interpolation of the two colours between the stops 
+designated by X. Each stop in STOPS should be a cons of its position
+along the gradient and the colour at that stop.
 
-See COLOR (type)
-See GAMMA-ADJUST"))
+See LERP"))
 
 ;; type.lisp
 (docs:define-docs
   (type color
-    "Representation of an RGBA colour quadruplet.
+    "Representation of a colour in some space.
 
 A colour is an immutable object and can be emitted into FASLs. Colors
 can and are cached aggressively thanks to their immutability.
 
+Note that an instance returned by a constructor may or may not be EQ 
+to a previously constructed color instance with the same channel 
+values. To properly test equality, use COLOR= or COLOR-EQUAL.
+
 Note that the colour channels are stored as SINGLE-FLOATs. Conversion
 functions to and from integers are available as operations. The floats
 are not constrained to be within [0,1] and can thus be used to encode
-high dynamic range. Gamma mapping from and to normalised space is also
-available as operations.
+high dynamic range.
 
-See R
-See G
-See B
+See CHANNELS
 See A
 See COLOR (function)
-See COLOR=")
+See COLOR=
+See COLOR-EQUAL
+See RGB
+See HSV
+See HSL
+See HSI
+See CMYK
+See LAB")
 
-  (function r
-    "Returns the red channel component.
+  (function channels
+    "Returns the list of available channels in the colour.
 
-See COLOR (type)")
-
-  (function g
-    "Returns the green channel component.
-
-See COLOR (type)")
-
-  (function b
-    "Returns the blue channel component.
+Accepts both a COLOR instance and a color type name.
 
 See COLOR (type)")
 
@@ -411,15 +228,153 @@ See COLOR (type)")
 
 See COLOR (type)")
 
-  (function color
-    "Create a new color instance.
-
-Note that the returned instance may or may not be EQ to a previously
-constructed color instance with the same channel values. To properly
-test equality, use COLOR=.
+  (function rgb
+    "Create a new RGB color instance.
 
 See COLOR (type)
 See COLOR=")
+
+  (function r
+    "Returns the red channel component.
+
+See RGB
+See RED")
+
+  (function g
+    "Returns the green channel component.
+
+See RGB
+See GREEN")
+
+  (function b
+    "Returns the blue channel component.
+
+See RGB
+See BLUE")
+
+  (function hsv
+    "Create a Hue/Saturation/Value component colour.
+
+The Hue should be in [0,360[ degrees, the other two values in the
+[0,1] range.
+
+See TO-HSV
+See HUE
+See SATURATION
+See VALUE
+See COLOR (type)")
+
+  (function h
+    "Returns the hue channel component.
+
+see HSV
+See HSL
+See HSI
+See HUE")
+
+  (function s
+    "Returns the saturation channel component.
+
+see HSV
+See HSL
+See HSI
+See SATURATION")
+
+  (function v
+    "Returns the value channel component.
+
+See HSV
+See VALUE")
+
+  (function hsl
+    "Create a Hue/Saturation/Lightness component colour.
+
+The Hue should be in [0,360[ degrees, the other two values in the
+[0,1] range.
+
+See TO-HSL
+See HUE
+See LIGHTNESS
+See COLOR (type)")
+
+  (function l
+    "Returns the lightness channel component.
+
+See HSL
+See LIGHTNESS")
+
+  (function hsi
+    "Create a Hue/Saturation/Intensity component colour.
+
+The Hue should be in [0,360[ degrees, the other two values in the
+[0,1] range.
+
+See TO-HSI
+See HUE
+See INTENSITY
+See COLOR (type)")
+
+  (function i
+    "Returns the intensity channel component.
+
+See HSI
+See INTENSITY")
+
+  (function cmyk
+    "Create a Cyan/Magenta/Yellow/Black component colour.
+
+See COLOR (type)
+See C
+See M
+See Y
+See K")
+
+  (function c
+    "Returns the cyan channel component.
+
+See CMYK
+See CYAN")
+
+  (function m
+    "Returns the magenta channel component.
+
+See CMYK
+See MAGENTA")
+
+  (function y
+    "Returns the yellow channel component.
+
+See CMYK
+See YELLOW")
+
+  (function k
+    "Returns the black channel component.
+
+See CMYK
+See BLACK")
+
+  (function lab
+    "Create a CIE LAB colour instance.
+
+See COLOR (type)
+See L*
+See A*
+See B*")
+
+  (function l*
+    "Returns the lightness channel component.
+
+See LAB")
+
+  (function a*
+    "Returns the green/red channel component.
+
+See LAB")
+
+  (function b*
+    "Returns the blue/yellow channel component.
+
+See LAB")
 
   (function color=
     "Returns true if all colours match in all channels.

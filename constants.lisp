@@ -6,7 +6,7 @@
 
 (in-package #:org.shirakumo.alloy.colored)
 
-(defmacro define-color (name int &optional (conversion '#'rgb))
+(defmacro define-color (name int &optional (channels '(r g b)))
   (let* ((std (find-package '#:org.shirakumo.alloy.colored.colors))
          (name (if (symbol-package name)
                    name
@@ -15,9 +15,9 @@
        ,@(when (eq std (symbol-package name))
            `((export ',name ,(symbol-package name))))
        (unless (boundp ',name)
-         (defconstant ,name (funcall ,conversion ,int))))))
+         (defconstant ,name (decode-color ,int 8 ',channels))))))
 
-(define-color #:transparent #x00000000 #'rgba)
+(define-color #:transparent #x00000000 (r g b a))
 (define-color #:black #x000000)
 (define-color #:white #xFFFFFF)
 (define-color #:red #xFF0000)

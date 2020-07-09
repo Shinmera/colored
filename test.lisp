@@ -40,24 +40,15 @@
 (define-test integer
   :parent colored
   :depends-on (type)
-  (is = #x000000 (colored:to-rgb colors:black))
-  (is = #xFF0000 (colored:to-rgb colors:red))
-  (is = #xFF0000 (colored:to-rgb (colored:color 1 0 0 0)))
-  (is = #x000000FF (colored:to-rgba colors:black))
-  (is colored:color= colors:black (colored:rgb #x000000))
-  (is colored:color= colors:red (colored:rgb #xFF0000))
-  (is colored:color= colors:red (colored:rgb #xFFFF0000))
-  (is colored:color= colors:black (colored:rgba #x000000FF))
-  (is colored:color= (colored:color 0 0 0 0) (colored:rgba #x00000000))
-  (is = #xFFFF (colored:encode-color colors:red 16 (r)))
-  (is = #x0000 (colored:encode-color colors:red 16 (g)))
-  (is = #x00FF (colored:encode-color colors:red 8 (g r)))
-  (is colored:color= colors:black (colored:decode-color 0 8 (r g b)))
-  (is colored:color= colors:black (colored:decode-color 0 8 (r)))
+  (is = #xFFFF (colored:encode-color colors:red 16 '(r)))
+  (is = #x0000 (colored:encode-color colors:red 16 '(g)))
+  (is = #x00FF (colored:encode-color colors:red 8 '(g r)))
+  (is colored:color= colors:black (colored:decode-color 0 8 '(r g b)))
+  (is colored:color= colors:black (colored:decode-color 0 8 '(r)))
   (is colored:color= colors:black (colored:decode-color 0 8 ()))
-  (is colored:color= colors:red (colored:decode-color #xFF 8 (r)))
-  (is colored:color= colors:red (colored:decode-color #xFFFF 16 (r)))
-  (is colored:color= colors:red (colored:decode-color #xFF00 8 (r g))))
+  (is colored:color= colors:red (colored:decode-color #xFF 8 '(r)))
+  (is colored:color= colors:red (colored:decode-color #xFFFF 16 '(r)))
+  (is colored:color= colors:red (colored:decode-color #xFF00 8 '(r g))))
 
 (define-test mapping
   :parent colored
@@ -80,13 +71,7 @@
   (is = 0 (colored:saturation colors:black))
   (is = 1 (colored:value colors:red))
   (is = 1 (colored:value colors:white))
-  (is = 0 (colored:value colors:black))
-  (true (loop for hue from 0 below 360
-              always (~= hue (colored:hue (colored:hsv hue 1 1)))))
-  (true (loop for saturation from 0 to 1 by 0.1
-              always (~= saturation (colored:saturation (colored:hsv 0 saturation 1)))))
-  (true (loop for value from 0 to 1 by 0.1
-              always (~= value (colored:value (colored:hsv 0 1 value))))))
+  (is = 0 (colored:value colors:black)))
 
 (define-test hsl
   :parent mapping
@@ -96,8 +81,12 @@
   (is = 0.5 (colored:lightness colors:red))
   (is = 0.5 (colored:lightness colors:green))
   (is = 1 (colored:lightness colors:white))
-  (is = 0 (colored:lightness colors:black))
-  (true (loop for hue from 0 below 360
-              always (~= hue (colored:hue (colored:hsl hue 1 1)))))
-  (true (loop for lightness from 0 to 1 by 0.1
-              always (~= lightness (colored:lightness (colored:hsl 0 1 lightness))))))
+  (is = 0 (colored:lightness colors:black)))
+
+(define-test hsi
+  :parent mapping
+  (is colored:color= colors:red () (colored:hsi 0 1 1/3))
+  (is ~= 1/3 (colored:intensity colors:red))
+  (is ~= 1/3 (colored:intensity colors:green))
+  (is = 1 (colored:intensity colors:white))
+  (is = 0 (colored:intensity colors:black)))

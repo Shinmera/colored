@@ -8,11 +8,30 @@
   (:use #:cl)
   ;; type.lisp
   (:export
+   #:channels
    #:color
+   #:a
+   #:rgb
    #:r
    #:g
    #:b
-   #:a
+   #:hsv
+   #:h
+   #:s
+   #:v
+   #:hsl
+   #:l
+   #:hsi
+   #:i
+   #:cmyk
+   #:c
+   #:m
+   #:y
+   #:k
+   #:lab
+   #:l*
+   #:a*
+   #:b*
    #:color=
    #:color-equal)
   ;; ops.lisp
@@ -34,12 +53,10 @@
    #:hsv
    #:hsl
    #:hsi
-   #:hcl
    #:temperature-color
    #:to-hsv
    #:to-hsl
    #:to-hsi
-   #:to-hcl
    #:red
    #:green
    #:blue
@@ -49,8 +66,6 @@
    #:value
    #:lightness
    #:intensity
-   #:chroma
-   #:luma
    #:map-color
    #:gamma-adjust
    #:reinhard-map

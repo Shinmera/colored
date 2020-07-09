@@ -9,7 +9,7 @@
   :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
-  :description ""
+  :description "System for RGB colour representation, conversion, and operation."
   :homepage "https://github.com/Shinmera/colored"
   :serial T
   :components ((:file "package")
