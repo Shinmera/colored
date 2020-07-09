@@ -15,7 +15,7 @@
        ,@(when (eq std (symbol-package name))
            `((export ',name ,(symbol-package name))))
        (unless (boundp ',name)
-         (defconstant ,name (decode-color ,int 8 ',channels))))))
+         (defconstant ,name (decode ,int :channels ',channels))))))
 
 (define-color #:transparent #x00000000 (r g b a))
 (define-color #:black #x000000)

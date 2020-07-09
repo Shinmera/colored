@@ -5,11 +5,11 @@
 |#
 
 (asdf:defsystem colored
-  :version "0.0.0"
+  :version "1.0.0"
   :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
-  :description "System for RGB colour representation, conversion, and operation."
+  :description "System for colour representation, conversion, and operation."
   :homepage "https://github.com/Shinmera/colored"
   :serial T
   :components ((:file "package")
