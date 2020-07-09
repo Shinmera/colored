@@ -62,7 +62,16 @@
    #:gradient)
   ;; constants.lisp
   (:export
-   #:define-color))
+   #:define-color)
+  ;; conversion-matrices.lisp
+  (:export
+   #:conversion-matrix
+   #:define-conversion)
+  ;; whitepoints.lisp
+  (:export
+   #:whitepoint
+   #:define-whitepoint
+   #:compute-d-whitepoint))
 
 (unless (find-package '#:org.shirakumo.alloy.colored.colors)
   (make-package '#:org.shirakumo.alloy.colored.colors :use ()))

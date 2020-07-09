@@ -228,11 +228,18 @@ See COLOR (type)")
 
 See COLOR (type)")
 
+  (function srgb
+    "Create a new sRGB color instance.
+
+This is distinct from RGB by being in a non-linear space.
+
+See COLOR (type)
+See RGB")
+
   (function rgb
     "Create a new RGB color instance.
 
-See COLOR (type)
-See COLOR=")
+See COLOR (type)")
 
   (function r
     "Returns the red channel component.
@@ -376,6 +383,29 @@ See LAB")
 
 See LAB")
 
+  (function xyz
+    "Create a CIE XYZ colour instance.
+
+See COLOR (type)
+See X
+See Y
+See Z")
+
+  (function x
+    "Return the X component.
+
+See XYZ")
+
+  (function y
+    "Return the Y component.
+
+See XYZ")
+
+  (function z
+    "Return the Z component.
+
+See XYZ")
+
   (function color=
     "Returns true if all colours match in all channels.
 
@@ -389,3 +419,106 @@ Unlike COLOR=, this ignores the alpha channel.
 
 See COLOR (type)
 See COLOR="))
+
+;; conversion-matrices.lisp
+(docs:define-docs
+  (function conversion-matrix
+    "Returns a linear conversion matrix for the two given colour spaces.
+
+Signals an error if no conversion matrix to fit the from/to
+spaces is known. Standard conversions are known for converting
+to/from XYZ and the following:
+
+  :ADOBE-RGB
+  :APPLE-RGB
+  :BEST-RGB
+  :BETA-RGB
+  :BRUCE-RGB
+  :CIE-RGB
+  :COLORMATCH-RGB
+  :DON-RGB-4
+  :ECI-RGB
+  :EKTA-SPACE-PS5
+  :NTSC-RGB
+  :PAL-RGB
+  :PROPHOTO-RGB
+  :SMPTE-C-RGB
+  :SRGB
+  :WIDE-GAMUT-RGB
+
+The conversion method may be passed to CONVERT via the keywords
+:SPACE (for a name of a colour space) or :MATRIX for passing a
+9-element vector directly.
+
+See DEFINE-CONVERSION")
+  
+  (function define-conversion
+    "Defines a new colour space conversion matrix.
+
+The matrix should be expressed via 9 entries that form a 3x3
+matrix.
+
+See CONVERSION-MATRIX"))
+
+;; whitepoints.lisp
+(docs:define-docs
+  (function whitepoint
+    "Returns a reference whitepoint XYZ triplet for the requested name.
+
+Signals an error if no whitepoint is known for the given name.
+The following whitepoints are defined by default:
+
+  :A
+  :B
+  :C
+  :D50
+  :D55
+  :D60
+  :D65
+  :D70
+  :D75
+  :E
+  :F1
+  :F2
+  :F3
+  :F4
+  :F5
+  :F6
+  :F7
+  :F8
+  :F9
+  :F10
+  :F11
+  :F12
+  :LED-B1
+  :LED-B2
+  :LED-B3
+  :LED-B4
+  :LED-B5
+  :LED-BH1
+  :LED-RGB1
+  :LED-V1
+  :LED-V2
+
+The whitepoint may be passed to CONVERT via the :WHITEPOINT keyword,
+as either the name of a defined whitepoint, or a vector exprsesing the
+XYZ triplet.
+
+See DEFINE-WHITEPOINT")
+  
+  (function define-whitepoint
+    "Defines a new whitepoint.
+
+The whitepoint should be a list of two values, the xy chromaticity
+coordinates in the xyY space. They are then automatically converted
+and internally stored in the XYZ format.
+
+See WHITEPOINT
+See COMPUTE-D-WHITEPOINT")
+  
+  (function compute-d-whitepoint
+    "Computes the xyY coordinates for the CIE standard illuminant series D.
+
+CCT must be a CCT reference temperature.
+
+See DEFINE-WHITEPOINT"))

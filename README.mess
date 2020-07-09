@@ -1,12 +1,12 @@
 ## About Colored
 This is a library for representing and mapping colours between their various spaces.
 
-It currently does not support ICC colour space conversions and XYZ/LAB mappings. This is however planned for a future release. If there are other mappings missing that you need, please file an issue.
+It currently does not support ICC colour space conversions from colour profile files. This is however planned for a future release. If there are other mappings missing that you need, please file an issue.
 
 ## How To
 For the purposes of this tutorial we assume the package ``org.shirakumo.alloy.colored`` is nicknamed ``colored``.
 
-Primarily, colours are constructed using ``color`` or one of the specific colour space constructors (``rgb``, ``hsv``, ``hsl``, ``hsi``, ``cmyk``, ``lab``).
+Primarily, colours are constructed using ``color`` or one of the specific colour space constructors (``rgb``, ``srgb``, ``hsv``, ``hsl``, ``hsi``, ``cmyk``, ``lab``, ``xyz``).
 
 You can also de/serialise colours from direct integer format using the ``encode`` and ``decode`` functions.
 
