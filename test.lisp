@@ -45,15 +45,15 @@
 (define-test integer
   :parent colored
   :depends-on (type)
-  (is = #xFFFF (colored:encode-color colors:red 16 '(r)))
-  (is = #x0000 (colored:encode-color colors:red 16 '(g)))
-  (is = #x00FF (colored:encode-color colors:red 8 '(g r)))
-  (is colored:color= colors:black (colored:decode-color 0 8 '(r g b)))
-  (is colored:color= colors:black (colored:decode-color 0 8 '(r)))
-  (is colored:color= colors:black (colored:decode-color 0 8 ()))
-  (is colored:color= colors:red (colored:decode-color #xFF 8 '(r)))
-  (is colored:color= colors:red (colored:decode-color #xFFFF 16 '(r)))
-  (is colored:color= colors:red (colored:decode-color #xFF00 8 '(r g))))
+  (is = #xFFFF (colored:encode colors:red :channel-size 16 :channels '(r)))
+  (is = #x0000 (colored:encode colors:red :channel-size 16 :channels '(g)))
+  (is = #x00FF (colored:encode colors:red :channel-size 8  :channels '(g r)))
+  (is colored:color= colors:black (colored:decode 0 :channel-size 8 :channels '(r g b)))
+  (is colored:color= colors:black (colored:decode 0 :channel-size 8 :channels '(r)))
+  (is colored:color= colors:black (colored:decode 0 :channel-size 8 :channels ()))
+  (is colored:color= colors:red (colored:decode #xFF :channel-size 8 :channels '(r)))
+  (is colored:color= colors:red (colored:decode #xFFFF :channel-size 16 :channels '(r)))
+  (is colored:color= colors:red (colored:decode #xFF00 :channel-size 8 :channels '(r g))))
 
 (define-test mapping
   :parent colored
