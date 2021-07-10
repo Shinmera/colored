@@ -91,7 +91,7 @@
            (if (constantp arg env)
                `(load-time-value (float ,arg 0.0))
                `(float ,arg 0.0))))
-    (if (and (constantp r env) (constantp g env) (constantp b env))
+    (if (and (constantp r env) (constantp g env) (constantp b env) (constantp a env))
         (list 'load-time-value
               (list '%rgb `(float ,r 0.0) `(float ,g 0.0) `(float ,b 0.0)
                     `(float ,a 0.0)))
