@@ -59,7 +59,11 @@
    #:yellow
    #:black
    #:lerp
-   #:gradient)
+   #:gradient
+   #:c*
+   #:c/
+   #:c+
+   #:c-)
   ;; constants.lisp
   (:export
    #:define-color)

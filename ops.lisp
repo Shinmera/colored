@@ -215,7 +215,7 @@
 (defmethod lerp (x (a rgb) (b rgb))
   (macrolet ((lerp (f)
                `(+ (* (,f a) (- 1 x)) (* (,f b) x))))
-    (color (lerp r) (lerp g) (lerp b) (lerp a))))
+    (rgb (lerp r) (lerp g) (lerp b) (lerp a))))
 
 (defmethod lerp (x (a color) (b color))
   (unless (eq (type-of a) (type-of b))
@@ -237,3 +237,16 @@
                    (when (<= px x nx)
                      (return (lerp (/ (- x px) (- nx px)) pc nc)))))
             finally (return (cdr prev)))))
+
+(defmacro define-cwise-op (name op)
+  `(progn
+     (defmethod ,name ((a rgb) (b rgb))
+       (rgb (,op (r a) (r b))
+            (,op (g a) (g b))
+            (,op (b a) (b b))
+            (,op (a a) (a b))))))
+
+(define-cwise-op c* *)
+(define-cwise-op c+ +)
+(define-cwise-op c- -)
+(define-cwise-op c/ /)
