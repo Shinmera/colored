@@ -11,7 +11,7 @@
          (name (if (symbol-package name)
                    name
                    (intern (string name) std))))
-    `(progn
+    `(eval-when (:compile-toplevel :load-toplevel :execute)
        ,@(when (eq std (symbol-package name))
            `((export ',name ,(symbol-package name))))
        (unless (boundp ',name)
