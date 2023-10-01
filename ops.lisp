@@ -152,6 +152,22 @@
          (/ (+ (r color) (g color) (b color)) 3)
          (a color))))
 
+(defmethod convert ((color oklab) (_ (eql 'rgb)) &key)
+  (let ((l (expt (+ (l* color) (* 0.3963377774 (a* color)) (* 0.2158037573 (b* color))) 3))
+        (m (expt (- (l* color) (* 0.1055613458 (a* color)) (* 0.0638541728 (b* color))) 3))
+        (s (expt (- (l* color) (* 0.0894841775 (a* color)) (* 1.2914855480 (b* color))) 3)))
+    (rgb (+ (* +4.0767416621 l) (* -3.3077115913 m) (* +0.2309699292 s))
+         (+ (* -1.2684380046 l) (* +2.6097574011 m) (* -0.3413193965 s))
+         (+ (* -0.0041960863 l) (* -0.7034186147 m) (* +1.7076147010 s)))))
+
+(defmethod convert ((color rgb) (_ (eql 'oklab)) &key)
+  (let ((l (expt (+ (l* color) (* 0.3963377774 (a* color)) (* 0.2158037573 (b* color))) 1/3))
+        (m (expt (- (l* color) (* 0.1055613458 (a* color)) (* 0.0638541728 (b* color))) 1/3))
+        (s (expt (- (l* color) (* 0.0894841775 (a* color)) (* 1.2914855480 (b* color))) 1/3)))
+    (oklab  (+ (* 0.2104542553 l) (* +0.7936177850 m) (* -0.0040720468 s))
+            (+ (* 1.9779984951 l) (* -2.4285922050 m) (* +0.4505937099 s))
+            (+ (* 0.0259040371 l) (* +0.7827717662 m) (* -0.8086757660 s)))))
+
 (defmacro define-channel-reader (name base-type channel &optional (conversion-type base-type))
   `(defun ,name (color)
      (typecase color

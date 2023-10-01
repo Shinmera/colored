@@ -32,6 +32,7 @@
    #:l*
    #:a*
    #:b*
+   #:oklab
    #:color=
    #:color-equal)
   ;; ops.lisp
