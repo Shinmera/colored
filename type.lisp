@@ -76,7 +76,7 @@
 (define-color-type cmyk (c m y k))
 (define-color-type xyz (x* y* z*))
 (define-color-type lab (l* a* b*))
-(define-color-type oklab (l* a* b*))
+(define-color-type oklab (l* a* b*) lab)
 
 (defun color (r g b &optional (a 1f0))
   (%rgb (float r 0f0) (float g 0f0) (float b 0f0) (float a 0f0)))
