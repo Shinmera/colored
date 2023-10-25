@@ -11,6 +11,11 @@
        (unless (boundp ',name)
          (defconstant ,name (decode ,int :channels ',channels))))))
 
+(defun list-colors ()
+  (loop for symbol being the external-symbols of '#:org.shirakumo.alloy.colored.colors
+        when (boundp symbol)
+        collect (cons (symbol-name symbol) (symbol-value symbol))))
+
 (define-color #:transparent #x00000000 (r g b a))
 (define-color #:black #x000000)
 (define-color #:white #xFFFFFF)

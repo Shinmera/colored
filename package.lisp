@@ -61,7 +61,8 @@
    #:c-)
   ;; constants.lisp
   (:export
-   #:define-color)
+   #:define-color
+   #:list-colors)
   ;; conversion-matrices.lisp
   (:export
    #:conversion-matrix
