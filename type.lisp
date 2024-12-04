@@ -5,14 +5,14 @@
 (defgeneric 2color= (a b))
 (defgeneric 2color-equal (a b))
 
-(defstruct (color
-            (:constructor _color (a))
-            (:conc-name NIL)
-            (:predicate NIL)
-            (:copier NIL))
-  (a 1.0f0 :type single-float :read-only T))
-
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  (defstruct (color
+              (:constructor _color (a))
+              (:conc-name NIL)
+              (:predicate NIL)
+              (:copier NIL))
+    (a 1.0f0 :type single-float :read-only T))
+
   (defmethod channels ((_ color)) NIL)
   (defmethod channels ((_ (eql 'color))) NIL))
 
@@ -22,7 +22,7 @@
                       collect ,transform)))
     (let ((%name (intern (format NIL "%~a" name)))
           (sfields (channels super)))
-      `(progn
+      `(eval-when (:compile-toplevel :load-toplevel :execute)
          (declaim (inline ,%name))
          (defstruct (,name
                      (:include ,super)
