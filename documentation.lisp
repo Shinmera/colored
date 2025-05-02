@@ -86,6 +86,15 @@ See B")
 
 See A")
 
+  (function luminance
+    "Returns the luminance of the colour.
+
+If not in RGB format, is first converted to RGB.
+The luminance is computed as the weighted contribution of the
+red, green, and blue channels by 0.299, 0.587, 0.114 respectively.
+
+See RGB")
+
   (function hue
     "Returns the hue component of the colour in degrees [0,360[.
 

@@ -186,6 +186,13 @@
 (defun alpha (color)
   (a color))
 
+(defun luminance (color)
+  (etypecase color
+    (rgb (+ (* (r color) 0.299)
+            (* (g color) 0.587)
+            (* (b color) 0.114)))
+    (color (luminance (convert color 'rgb)))))
+
 (define-channel-reader red rgb r)
 (define-channel-reader green rgb g)
 (define-channel-reader blue rgb b)

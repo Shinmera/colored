@@ -44,6 +44,7 @@
    #:green
    #:blue
    #:alpha
+   #:luminance
    #:hue
    #:saturation
    #:value
