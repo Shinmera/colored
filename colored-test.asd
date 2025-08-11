@@ -4,7 +4,7 @@
   :author "Yukari Hafner <shinmera@tymoon.eu>"
   :maintainer "Yukari Hafner <shinmera@tymoon.eu>"
   :description "Tests for the Colored colour library."
-  :homepage "https://github.com/Shinmera/colored"
+  :homepage "https://shinmera.com/project/colored"
   :serial T
   :components ((:file "test"))
   :depends-on (:colored

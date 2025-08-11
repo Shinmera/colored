@@ -4,9 +4,9 @@
   :author "Yukari Hafner <shinmera@tymoon.eu>"
   :maintainer "Yukari Hafner <shinmera@tymoon.eu>"
   :description "System for colour representation, conversion, and operation."
-  :homepage "https://shinmera.github.io/colored"
-  :bug-tracker "https://github.com/Shinmera/colored/issues"
-  :source-control (:git "https://github.com/Shinmera/colored.git")
+  :homepage "https://shinmera.com/docs/colored"
+  :bug-tracker "https://shinmera.com/project/colored/issues"
+  :source-control (:git "https://shinmera.com/project/colored.git")
   :serial T
   :components ((:file "package")
                (:file "whitepoints")
